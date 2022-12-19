@@ -16,8 +16,6 @@ import Then
 // 토글에 기능 구현하기
 
 
-
-
 class ViewController: UIViewController {
     
     lazy var tableView = UITableView(frame: .zero,
@@ -43,7 +41,6 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         
         setAllConfig()
         setAllSubView()
@@ -56,6 +53,7 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .white
         tableView.backgroundColor = .systemGray6
         self.tableView.dataSource = self
+        self.tableView.delegate = self
     }
     
     private func setAllSubView() {
@@ -73,13 +71,14 @@ class ViewController: UIViewController {
 }
 
 // 테이블 데이터 관리 익스텐션
-extension ViewController: UITableViewDataSource {
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         return data[section].count
     }
 
+    // MARK: -
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -88,19 +87,21 @@ extension ViewController: UITableViewDataSource {
         
         let cell = UITableViewCell(style: .value1,
                                    reuseIdentifier: .none)
-        var someContent = UIListContentConfiguration.subtitleCell()
+        
+        let cell2 = UIListContentConfiguration.subtitleCell()
+        
         
         let someData = data[indexPath.section][indexPath.row]
         let switchButton = UISwitch(frame: .zero)
         
         cell.textLabel?.text = someData.content
         cell.imageView?.image = UIImage(systemName: someData.image)
-        
-        /* 이거 컬렉션뷰에서 쓸 수 있는거라고 되어있어서 적용해봤는데 안됨
+         
+        /*
         if someData.content == "장다영" {
             someContent.secondaryText = "회고 3조의 파치리스"
         }
-         */
+        */
         
         if toggleList.contains(someData.content) {
             cell.accessoryView = switchButton
@@ -123,6 +124,15 @@ extension ViewController: UITableViewDataSource {
         return header[section]
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let name = data[indexPath.section][indexPath.row].content
+        let vc = DetailViewController(name: name)
+        
+        print(name)
+        
+        self.show(vc, sender: nil)
+        
+    }
 }
 
 
